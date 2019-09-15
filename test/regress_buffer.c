@@ -2484,6 +2484,69 @@ end:
 		evbuffer_free(tmp_buf);
 }
 
+static void
+test_evbuffer_writecb(evutil_socket_t fd, short what, void *arg)
+{
+	struct evbuffer *b = arg;
+	int r;
+	evbuffer_validate(b);
+	while (evbuffer_get_length(b)) {
+		r = evbuffer_write(b, fd);
+		tt_int_op(r, ==, 3);
+		if (r > 0) {
+			addfile_test_total_written += r;
+			TT_BLATHER(("Wrote %d/%d bytes", r, addfile_test_total_written));
+		} else {
+			int e = evutil_socket_geterror(fd);
+			if (EVUTIL_ERR_RW_RETRIABLE(e))
+				return;
+			tt_fail_perror("write");
+			event_base_loopexit(addfile_test_event_base, NULL);
+		}
+		evbuffer_validate(b);
+	}
+	addfile_test_done_writing = 1;
+	return;
+end:
+	event_base_loopexit(addfile_test_event_base, NULL);
+}
+
+static void
+test_evbuffer_readcb(evutil_socket_t fd, short what, void *arg)
+{
+	struct evbuffer *b = arg;
+	int e, r = 0;
+	if (b->freeze_end) {
+		event_base_loopexit(addfile_test_event_base, NULL);
+		return;
+	}
+	do {
+		r = evbuffer_read(b, fd, 3);
+		tt_int_op(r, ==, 3);
+		if (r > 0) {
+			addfile_test_total_read += r;
+			TT_BLATHER(("Read %d/%d bytes", r, addfile_test_total_read));
+		}
+		if (3 == r) {
+			event_base_loopexit(addfile_test_event_base, NULL);
+			return;
+		}
+	} while (r > 0);
+	if (r < 0) {
+		e = evutil_socket_geterror(fd);
+		if (!EVUTIL_ERR_RW_RETRIABLE(e)) {
+			tt_fail_perror("read");
+			event_base_loopexit(addfile_test_event_base, NULL);
+		}
+	}
+	if (addfile_test_done_writing &&
+		addfile_test_total_read >= addfile_test_total_written) {
+		event_base_loopexit(addfile_test_event_base, NULL);
+	}
+end:
+	return;
+}
+
 /* Check whether evbuffer freezing works right.  This is called twice,
    once with the argument "start" and once with the argument "end".
    When we test "start", we freeze the start of an evbuffer and make sure
@@ -2494,7 +2557,7 @@ end:
 static void
 test_evbuffer_freeze(void *ptr)
 {
-	struct evbuffer *buf = NULL, *tmp_buf=NULL;
+	struct evbuffer *buf = NULL, *buf1 = NULL, *buf2 = NULL, *tmp_buf = NULL;
 	const char string[] = /* Year's End, Richard Wilbur */
 	    "I've known the wind by water banks to shake\n"
 	    "The late leaves down, which frozen where they fell\n"
@@ -2503,19 +2566,28 @@ test_evbuffer_freeze(void *ptr)
 	const int start = !strcmp(ptr, "start");
 	char *cp;
 	char charbuf[128];
+	char *tmpfilename = NULL;
+	char *data = NULL;
+	int fd = -1;
 	int r;
 	size_t orig_length;
 	struct evbuffer_iovec v[1];
+	ev_off_t starting_offset = 0, mapping_len = -1;
 
 	if (!start)
 		tt_str_op(ptr, ==, "end");
 
 	buf = evbuffer_new();
+	buf1 = evbuffer_new();
+	buf2 = evbuffer_new();
 	tmp_buf = evbuffer_new();
 	tt_assert(tmp_buf);
 
 	evbuffer_add(buf, string, strlen(string));
+	evbuffer_add(buf1, string, strlen(string));
+	evbuffer_add(buf2, "abc", 3);
 	evbuffer_freeze(buf, start); /* Freeze the start or the end.*/
+	evbuffer_freeze(tmp_buf, start);
 
 #define FREEZE_EQ(a, startcase, endcase)		\
 	do {						\
@@ -2545,6 +2617,27 @@ test_evbuffer_freeze(void *ptr)
 	r = evbuffer_add_printf(buf, "Hello %s", "world");
 	FREEZE_EQ(r, 11, -1);
 	/* TODO: test add_buffer, add_file, read */
+	r = evbuffer_add_buffer(tmp_buf,buf1);
+	FREEZE_EQ(r, 0, -1);
+	fd = regress_make_tmpfile("file_buffer_test_file", 21, &tmpfilename);
+	r = evbuffer_add_fileevbuffer_add_file(buf, fd, starting_offset, mapping_len);
+	FREEZE_EQ(r, 0, -1);
+
+	struct event *rev = NULL, *wev = NULL;
+	struct event_base *base = event_base_new();
+	addfile_test_event_base = base;
+	evutil_socket_t pair[2] = {-1, -1};
+
+	if (evutil_socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1)
+		tt_abort_msg("socketpair failed");
+	evutil_make_socket_nonblocking(pair[0]);
+	evutil_make_socket_nonblocking(pair[1]);
+
+	wev = event_new(base, pair[0], EV_WRITE, test_evbuffer_writecb, buf2);
+	rev = event_new(base, pair[1], EV_READ, test_evbuffer_readcb, tmp_buf);
+	event_add(wev, NULL);
+	event_add(rev, NULL);
+	event_base_dispatch(base);
 
 	if (!start)
 		tt_int_op(orig_length, ==, evbuffer_get_length(buf));
