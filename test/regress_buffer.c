@@ -2516,7 +2516,7 @@ test_evbuffer_readcb(evutil_socket_t fd, short what, void *arg)
 {
 	struct evbuffer *b = arg;
 	int e, r = 0;
-	if (b->freeze_end) {
+	if (b->freeze_end == 1) {
 		event_base_loopexit(addfile_test_event_base, NULL);
 		return;
 	}
