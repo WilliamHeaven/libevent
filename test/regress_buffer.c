@@ -2619,7 +2619,7 @@ test_evbuffer_freeze(void *ptr)
 	r = evbuffer_add_buffer(tmp_buf,buf1);
 	FREEZE_EQ(r, 0, -1);
 	fd = regress_make_tmpfile("file_buffer_test_file", 21, &tmpfilename);
-	r = evbuffer_add_fileevbuffer_add_file(buf, fd, starting_offset, mapping_len);
+	r = evbuffer_add_file(buf, fd, starting_offset, mapping_len);
 	FREEZE_EQ(r, 0, -1);
 
 	struct event *rev = NULL, *wev = NULL;
