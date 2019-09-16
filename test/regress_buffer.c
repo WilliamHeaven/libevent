@@ -2507,6 +2507,7 @@ test_evbuffer_freeze(void *ptr)
 	int r;
 	size_t orig_length;
 	struct evbuffer_iovec v[1];
+        ev_off_t starting_offset = 0,mapping_len = -1;         
 
 	if (!start)
 		tt_str_op(ptr, ==, "end");
