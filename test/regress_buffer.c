@@ -2567,7 +2567,6 @@ test_evbuffer_freeze(void *ptr)
 	char *cp;
 	char charbuf[128];
 	char *tmpfilename = NULL;
-	char *data = NULL;
 	int fd = -1;
 	int r;
 	size_t orig_length;
@@ -2666,6 +2665,29 @@ end:
 
 	if (tmp_buf)
 		evbuffer_free(tmp_buf);
+
+	if(buf1)
+		evbuffer_free(buf1);
+
+	if(tmpfilename) {
+		unlink(tmpfilename);
+		free(tmpfilename);
+	}
+
+	if(pair[0] >= 0)
+		evutil_closesocket(pair[0]);
+	
+	if(pair[1] >= 0)
+		evutil_closesocket(pair[1]);
+	
+	if(wev)
+	   event_free(wev);
+	
+	if(rev)
+	  event_free(rev);
+	
+	if(base)
+	   event_base_free(base);	
 }
 
 static void
