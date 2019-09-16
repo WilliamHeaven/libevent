@@ -2586,6 +2586,11 @@ end:
 
 	if(buf1)
 		evbuffer_free(buf1);
+
+	if(tmpfilename) {
+	   unlink(tmpfilename);
+	   free(tmpfilename);
+	}
 }
 
 static void
