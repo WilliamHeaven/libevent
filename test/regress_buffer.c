@@ -2493,7 +2493,7 @@ end:
 static void
 test_evbuffer_freeze(void *ptr)
 {
-	struct evbuffer *buf = NULL, *buf1 = NULL,*tmp_buf = NULL;
+	struct evbuffer *buf = NULL, *buf1 = NULL,*tmp_buf = NULL,*tmp_buf2 = NULL;
 	const char string[] = /* Year's End, Richard Wilbur */
 	    "I've known the wind by water banks to shake\n"
 	    "The late leaves down, which frozen where they fell\n"
@@ -2515,12 +2515,15 @@ test_evbuffer_freeze(void *ptr)
 	buf = evbuffer_new();
 	buf1 = evbuffer_new();
 	tmp_buf = evbuffer_new();
+	tmp_buf2 = evbuffer_new();
 	tt_assert(tmp_buf);
+	tt_assert(tmp_buf2);
 
 	evbuffer_add(buf, string, strlen(string));
 	evbuffer_add(buf1, string, strlen(string));
 	evbuffer_freeze(buf, start); /* Freeze the start or the end.*/
 	evbuffer_freeze(tmp_buf, start);
+	evbuffer_freeze(tmp_buf2, start);
 
 #define FREEZE_EQ(a, startcase, endcase)		\
 	do {						\
@@ -2573,7 +2576,12 @@ test_evbuffer_freeze(void *ptr)
 	if (cp)
 		free(cp);
 	/* TODO: Test remove_buffer, add_buffer, write, prepend_buffer */
-
+	r = evbuffer_remove_buffer(buf,tmp_buf2,1);
+	REEEZE_EQ(r,-1,1);
+	r = evbuffer_drain(tmp_buf2,1);
+	REEEZE_EQ(r,0,0);
+	r = evbuffer_prepend_buffer(tmp_buf2,buf);
+	REEEZE_EQ(r,-1,0);
 	if (start)
 		tt_int_op(orig_length, ==, evbuffer_get_length(buf));
 
@@ -2583,6 +2591,9 @@ end:
 
 	if (tmp_buf)
 		evbuffer_free(tmp_buf);
+	
+	if (tmp_buf2)
+		evbuffer_free(tmp_buf2);
 
 	if(buf1)
 		evbuffer_free(buf1);
