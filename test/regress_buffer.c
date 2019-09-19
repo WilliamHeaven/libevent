@@ -2580,17 +2580,17 @@ test_evbuffer_freeze(void *ptr)
 	if (evbuffer_get_length(tmp_buf) == 0)
 		evbuffer_add(tmp_buf, "xyz", 3);
 	r = evbuffer_remove_buffer(buf,tmp_buf, 3);
-	REEEZE_EQ(r, -1, 3);
+	FREEEZE_EQ(r, -1, 3);
 	r = evbuffer_drain(buf, 3);
-	REEEZE_EQ(r, -1, 0);
+	FREEEZE_EQ(r, -1, 0);
 	r = evbuffer_prepend_buffer(buf, tmp_buf);
-	REEEZE_EQ(r, -1, 0);
+	FREEEZE_EQ(r, -1, 0);
 	len = evbuffer_get_length(buf);
 	r = evbuffer_write(buf,fd);
-	REEEZE_EQ(r, -1, len); 
+	FREEEZE_EQ(r, -1, len); 
 	len = evbuffer_get_length(buf_two);
 	r = evbuffer_write_atmost(buf_two, fd ,-1);
-	REEEZE_EQ(r, -1, len);
+	FREEEZE_EQ(r, -1, len);
 	
 	if (start)
 		tt_int_op(orig_length, ==, evbuffer_get_length(buf));
