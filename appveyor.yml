@@ -1,9 +1,8 @@
 ---
 version: 2.2.0.{build}
-# os: 
-    - Visual Studio 2017
-    - Visual Studio 2019
-
+os: 
+  - Visual Studio 2019
+  - Visual Studio 2017
 platform:
   - x64
 
@@ -29,7 +28,10 @@ environment:
   matrix:
     - EVENT_BUILD_METHOD: "cmake"
       EVENT_CMAKE_OPTIONS: ""
-      APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"
+      APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"   
+    - EVENT_BUILD_METHOD: "cmake"
+      EVENT_CMAKE_OPTIONS: ""
+      APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
     # - EVENT_BUILD_METHOD: "cmake"
     #   EVENT_CMAKE_OPTIONS: "-DEVENT__LIBRARY_TYPE=STATIC"
     #   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
@@ -39,9 +41,9 @@ environment:
     # - EVENT_BUILD_METHOD: "autotools"
     #   EVENT_CONFIGURE_OPTIONS: "--disable-openssl"
     #   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
-    # - EVENT_BUILD_METHOD: "autotools"
-    #   EVENT_CONFIGURE_OPTIONS: "--disable-thread-support"
-    #   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
+    - EVENT_BUILD_METHOD: "autotools"
+      EVENT_CONFIGURE_OPTIONS: "--disable-thread-support"
+      APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
     # - EVENT_BUILD_METHOD: "autotools"
     #   EVENT_CONFIGURE_OPTIONS: "--disable-debug-mode"
     #   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
@@ -63,16 +65,13 @@ environment:
     # - EVENT_BUILD_METHOD: "cmake"
     #   EVENT_CMAKE_OPTIONS: "-DCMAKE_C_FLAGS='-DUNICODE -D_UNICODE'"
     #   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
-    - EVENT_BUILD_METHOD: "cmake"
-      EVENT_CMAKE_OPTIONS: ""
-      APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"      
 
 matrix:
-   exclude: 
-     - os: Visual Studio 2019
-       APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
-     - os: Visual Studio 2017
-       APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"      
+  exclude: 
+    - os: Visual Studio 2019
+      APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
+    - os: Visual Studio 2017
+      APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"      
   fast_finish: true
 
 init:
@@ -109,7 +108,7 @@ build_script:
         cd build-cmake
         if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
         if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq 'Visual Studio 2017') { cmake -G "Visual Studio 15 2017 Win64" .. $env:EVENT_CMAKE_OPTIONS }
-        if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq 'Visual Studio 2019') { cmake -G "Visual Studio 16 2019" -A x64 .. $env:EVENT_CMAKE_OPTIONS }        
+        if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq 'Visual Studio 2019') { cmake -G "Visual Studio 16 2019" -A x64 .. $env:EVENT_CMAKE_OPTIONS }
         if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
         cmake --build . -j $env:EVENT_BUILD_PARALLEL -- /nologo /verbosity:minimal
         if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
