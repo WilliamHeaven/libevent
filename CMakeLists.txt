@@ -46,7 +46,7 @@ set(EVENT__LIBRARY_TYPE DEFAULT CACHE STRING
 
 project(libevent C)
 
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
 string(REGEX MATCH "SunOS" SOLARIS "${CMAKE_SYSTEM_NAME}")
 
 
@@ -244,7 +244,6 @@ if (${MSVC})
 
     if (EVENT__MSVC_STATIC_RUNTIME)
         foreach (flag_var
-                 CMAKE_C_FLAGS
                  CMAKE_C_FLAGS_DEBUG
                  CMAKE_C_FLAGS_RELEASE
                  CMAKE_C_FLAGS_MINSIZEREL
@@ -436,7 +435,9 @@ CHECK_INCLUDE_FILE(mach/mach_time.h EVENT__HAVE_MACH_MACH_TIME_H)
 CHECK_INCLUDE_FILE(netinet/tcp.h EVENT__HAVE_NETINET_TCP_H)
 CHECK_INCLUDE_FILE(sys/wait.h EVENT__HAVE_SYS_WAIT_H)
 CHECK_INCLUDE_FILE(sys/resource.h EVENT__HAVE_SYS_RESOURCE_H)
-CHECK_INCLUDE_FILE(sys/sysctl.h EVENT__HAVE_SYS_SYSCTL_H)
+if (NOT "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux")
+    CHECK_INCLUDE_FILE(sys/sysctl.h EVENT__HAVE_SYS_SYSCTL_H)
+endif()
 CHECK_INCLUDE_FILE(sys/timerfd.h EVENT__HAVE_SYS_TIMERFD_H)
 CHECK_INCLUDE_FILE(errno.h EVENT__HAVE_ERRNO_H)
 
@@ -524,6 +525,13 @@ endif()
 
 if(NOT WIN32)
     CHECK_FUNCTION_EXISTS_EX(select EVENT__HAVE_SELECT)
+endif()
+
+if(WIN32)
+    CHECK_FUNCTION_EXISTS_EX(_gmtime64_s EVENT__HAVE__GMTIME64_S)
+    if (NOT EVENT__HAVE__GMTIME64_S)
+        CHECK_FUNCTION_EXISTS_EX(_gmtime64 EVENT__HAVE__GMTIME64)
+    endif()
 endif()
 
 CHECK_TYPE_SIZE("uint8_t" EVENT__HAVE_UINT8_T)
@@ -977,6 +985,9 @@ macro(add_sample_prog ssl name)
 
     if (${ssl})
         target_link_libraries(${name} event_openssl)
+        if(WIN32)
+            target_link_libraries(${name} crypt32)
+        endif()
     endif()
 endmacro()
 if (NOT EVENT__DISABLE_SAMPLES)
@@ -1476,6 +1487,11 @@ configure_file(${PROJECT_SOURCE_DIR}/cmake/LibeventConfigVersion.cmake.in
 # Install compat headers
 install(FILES ${HDR_COMPAT}
         DESTINATION "include"
+        COMPONENT dev)
+
+# Install public headers
+install(FILES ${HDR_PUBLIC}
+        DESTINATION "include/event2"
         COMPONENT dev)
 
 # Install the configs.
