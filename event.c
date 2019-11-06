@@ -696,6 +696,7 @@ event_base_new_with_config(const struct event_config *cfg)
 	}
 
 	if (base->evbase == NULL) {
+		printf("======");
 		event_warnx("%s: no event mechanism available",
 		    __func__);
 		base->evsel = NULL;
