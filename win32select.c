@@ -182,20 +182,32 @@ win32_init(struct event_base *base)
 {
 	struct win32op *winop;
 	size_t size;
-	if (!(winop = mm_calloc(1, sizeof(struct win32op))))
+	if (!(winop = mm_calloc(1, sizeof(struct win32op)))) {
+		printf("winop null\n");
 		return NULL;
+	}
 	winop->num_fds_in_fd_sets = NEVENT;
 	size = FD_SET_ALLOC_SIZE(NEVENT);
-	if (!(winop->readset_in = mm_malloc(size)))
+	if (!(winop->readset_in = mm_malloc(size))) {
+		printf("winop->readset_in null\n");
 		goto err;
-	if (!(winop->writeset_in = mm_malloc(size)))
+	}
+	if (!(winop->writeset_in = mm_malloc(size))) {
+		printf("winop->writeset_in null\n");
 		goto err;
-	if (!(winop->readset_out = mm_malloc(size)))
+	}
+	if (!(winop->readset_out = mm_malloc(size))) {
+		printf("winop->readset_out null\n");
 		goto err;
-	if (!(winop->writeset_out = mm_malloc(size)))
+	}
+	if (!(winop->writeset_out = mm_malloc(size))) {
+		printf("winop->writeset_out null\n");
 		goto err;
-	if (!(winop->exset_out = mm_malloc(size)))
+	}
+	if (!(winop->exset_out = mm_malloc(size))) {
+		printf("winop->exset_out null\n");
 		goto err;
+	}
 	winop->readset_in->fd_count = winop->writeset_in->fd_count = 0;
 	winop->readset_out->fd_count = winop->writeset_out->fd_count
 		= winop->exset_out->fd_count = 0;
