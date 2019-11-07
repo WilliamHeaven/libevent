@@ -2855,6 +2855,7 @@ evutil_make_internal_pipe_(evutil_socket_t fd[2])
 		}
 		return 0;
 	}
+	printf("ERR:===\n");
 	fd[0] = fd[1] = -1;
 	return -1;
 }
