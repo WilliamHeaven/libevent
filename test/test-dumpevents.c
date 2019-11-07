@@ -29,6 +29,7 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <windows.h>
+#include "event2/thread.h"
 #else
 #include <unistd.h>
 #endif
