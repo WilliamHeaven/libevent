@@ -68,7 +68,7 @@ static int cfg_grouplimit_tolerance = -1;
 static int cfg_stddev_tolerance = -1;
 
 #ifdef _WIN32
-static int cfg_enable_iocp = 1;
+static int cfg_enable_iocp = 0;
 #endif
 
 static struct timeval cfg_tick = { 0, 500*1000 };
@@ -550,6 +550,7 @@ main(int argc, char **argv)
 	WSADATA wsaData;
 
 	(void) WSAStartup(wVersionRequested, &wsaData);
+	evthread_use_windows_threads();
 #endif
 
 	evutil_weakrand_seed_(&weakrand_state, 0);
