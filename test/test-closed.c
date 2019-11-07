@@ -76,7 +76,9 @@ main(int argc, char **argv)
 	struct event *ev;
 	const char *test = "test string";
 	evutil_socket_t pair[2];
-
+#ifdef _WIN32
+	evthread_use_windows_threads();
+#endif
 	/* Initialize the library and check if the backend
 	   supports EV_FEATURE_EARLY_CLOSE
 	*/

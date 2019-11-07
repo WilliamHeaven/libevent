@@ -185,7 +185,8 @@ main(int argc, char **argv)
 #ifdef _WIN32
 	WSADATA WSAData;
 	WSAStartup(0x101, &WSAData);
-#endif
+	evthread_use_windows_threads();
+endif
 
 	resource = "/ref";
 

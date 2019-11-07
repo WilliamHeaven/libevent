@@ -236,6 +236,7 @@ main(int argc, char **argv)
 #ifdef _WIN32
 	WSADATA WSAData;
 	WSAStartup(0x101, &WSAData);
+	evthread_use_windows_threads();
 #endif
 
 	/* Set up an address, used by both client & server. */

@@ -2517,6 +2517,9 @@ end:
 static void
 test_methods(void *ptr)
 {
+#ifdef _WIN32
+	evthread_use_windows_threads();
+#endif
 	const char **methods = event_get_supported_methods();
 	struct event_config *cfg = NULL;
 	struct event_base *base = NULL;
@@ -2641,6 +2644,9 @@ methodname_to_envvar(const char *mname, char *buf, size_t buflen)
 static void
 test_base_environ(void *arg)
 {
+#ifdef _WIN32
+	evthread_use_windows_threads();
+#endif
 	struct event_base *base = NULL;
 	struct event_config *cfg = NULL;
 
@@ -3010,6 +3016,9 @@ dummy_free(void *mem_)
 static void
 test_mm_functions(void *arg)
 {
+#ifdef _WIN32
+	evthread_use_windows_threads();
+#endif
 	struct event_base *b = NULL;
 	struct event_config *cfg = NULL;
 	event_set_mem_functions(dummy_malloc, dummy_realloc, dummy_free);

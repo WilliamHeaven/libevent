@@ -202,6 +202,9 @@ end:
 static void
 dns_resolve_reverse(void *ptr)
 {
+#ifdef _WIN32
+	evthread_use_windows_threads();
+#endif
 	struct in_addr in;
 	struct event_base *base = event_base_new();
 	struct evdns_base *dns = evdns_base_new(base, EVDNS_BASE_INITIALIZE_NAMESERVERS);
@@ -2071,6 +2074,9 @@ test_dbg_leak_shutdown(void *env_)
 static void
 test_getaddrinfo_async_cancel_stress(void *ptr)
 {
+#ifdef _WIN32
+	evthread_use_windows_threads();
+#endif
 	struct event_base *base;
 	struct evdns_base *dns_base = NULL;
 	struct evdns_server_port *server = NULL;

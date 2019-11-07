@@ -68,7 +68,7 @@ static int cfg_grouplimit_tolerance = -1;
 static int cfg_stddev_tolerance = -1;
 
 #ifdef _WIN32
-static int cfg_enable_iocp = 0;
+static int cfg_enable_iocp = 1;
 #endif
 
 static struct timeval cfg_tick = { 0, 500*1000 };

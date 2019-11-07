@@ -85,6 +85,7 @@ main(int argc, char **argv)
 	wVersionRequested = MAKEWORD(2, 2);
 
 	WSAStartup(wVersionRequested, &wsaData);
+	evthread_use_windows_threads();
 #endif
 
 #ifdef _WIN32
