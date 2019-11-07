@@ -2828,7 +2828,6 @@ evutil_make_internal_pipe_(evutil_socket_t fd[2])
 			close(fd[0]);
 			close(fd[1]);
 			fd[0] = fd[1] = -1;
-			printf("ERR:pipe(fd) -1\n");
 			return -1;
 		}
 		return 0;
@@ -2850,12 +2849,10 @@ evutil_make_internal_pipe_(evutil_socket_t fd[2])
 			evutil_closesocket(fd[0]);
 			evutil_closesocket(fd[1]);
 			fd[0] = fd[1] = -1;
-			printf("ERR:LOCAL_SOCKETPAIR_AF:%d\n",LOCAL_SOCKETPAIR_AF);
 			return -1;
 		}
 		return 0;
 	}
-	printf("ERR:===\n");
 	fd[0] = fd[1] = -1;
 	return -1;
 }
