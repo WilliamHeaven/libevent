@@ -79,7 +79,6 @@ main(int argc, char **argv)
 #ifdef EVTHREAD_USE_WINDOWS_THREADS_IMPLEMENTED
 	evthread_use_windows_threads();
 #endif
-#endif
 	/* Initialize the library and check if the backend
 	   supports EV_FEATURE_EARLY_CLOSE
 	*/
