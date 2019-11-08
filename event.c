@@ -691,8 +691,9 @@ event_base_new_with_config(const struct event_config *cfg)
 			continue;
 
 		base->evsel = eventops[i];
-
+		printf("i am in!\n");
 		base->evbase = base->evsel->init(base);
+		printf("base->evbase:%p\n",base->evbase);
 	}
 	if (base->evbase == NULL) {
 		event_warnx("%s: no event mechanism available",
