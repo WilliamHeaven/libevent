@@ -96,7 +96,9 @@ main(int argc, char **argv)
 #ifdef _WIN32
 	WSADATA WSAData;
 	WSAStartup(0x101, &WSAData);
+#ifdef EVTHREAD_USE_WINDOWS_THREADS_IMPLEMENTED
 	evthread_use_windows_threads();
+#endif
 #else
 	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
 		return (1);

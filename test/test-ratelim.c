@@ -550,7 +550,9 @@ main(int argc, char **argv)
 	WSADATA wsaData;
 
 	(void) WSAStartup(wVersionRequested, &wsaData);
+#ifdef EVTHREAD_USE_WINDOWS_THREADS_IMPLEMENTED
 	evthread_use_windows_threads();
+#endif
 #endif
 
 	evutil_weakrand_seed_(&weakrand_state, 0);

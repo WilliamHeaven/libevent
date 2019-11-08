@@ -179,7 +179,9 @@ main(int argc, char **argv)
 	wVersionRequested = MAKEWORD(2, 2);
 
 	(void) WSAStartup(wVersionRequested, &wsaData);
+#ifdef EVTHREAD_USE_WINDOWS_THREADS_IMPLEMENTED
 	evthread_use_windows_threads();
+#endif
 #endif
 	if (evutil_socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1)
 		return (1);

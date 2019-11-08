@@ -86,7 +86,9 @@ main(int argc, char **argv)
 	wVersionRequested = MAKEWORD(2, 2);
 
 	WSAStartup(wVersionRequested, &wsaData);
+#ifdef EVTHREAD_USE_WINDOWS_THREADS_IMPLEMENTED
 	evthread_use_windows_threads();
+#endif
 #endif
 
 #ifdef _WIN32

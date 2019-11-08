@@ -202,7 +202,7 @@ end:
 static void
 dns_resolve_reverse(void *ptr)
 {
-#ifdef _WIN32
+#ifdef EVTHREAD_USE_WINDOWS_THREADS_IMPLEMENTED
 	evthread_use_windows_threads();
 #endif
 	struct in_addr in;
@@ -2074,7 +2074,7 @@ test_dbg_leak_shutdown(void *env_)
 static void
 test_getaddrinfo_async_cancel_stress(void *ptr)
 {
-#ifdef _WIN32
+#ifdef EVTHREAD_USE_WINDOWS_THREADS_IMPLEMENTED
 	evthread_use_windows_threads();
 #endif
 	struct event_base *base;
