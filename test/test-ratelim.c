@@ -116,10 +116,10 @@ loud_writecb(struct bufferevent *bev, void *ctx)
 	char buf[1024];
 	int r = evutil_weakrand_(&weakrand_state);
 	memset(buf, r, sizeof(buf));
-	while (evbuffer_get_length(output) < 8192) {
+	//while (evbuffer_get_length(output) < 8192) {
 		evbuffer_add(output, buf, sizeof(buf));
 		cs->queued += sizeof(buf);
-	}
+	//}
 }
 
 static void
