@@ -129,10 +129,6 @@ discard_readcb(struct bufferevent *bev, void *ctx)
 	struct evbuffer *input = bufferevent_get_input(bev);
 	size_t len = evbuffer_get_length(input);
 	evbuffer_drain(input, len);
-	static int i = 0;
-	static int t = 0;
-	t += len;
-	printf("i:%d t:%d\n",i++,t);
 	cs->received += len;
 }
 
@@ -554,9 +550,9 @@ main(int argc, char **argv)
 	WSADATA wsaData;
 
 	(void) WSAStartup(wVersionRequested, &wsaData);
-#ifdef EVTHREAD_USE_WINDOWS_THREADS_IMPLEMENTED
-	evthread_use_windows_threads();
-#endif
+//#ifdef EVTHREAD_USE_WINDOWS_THREADS_IMPLEMENTED
+//	evthread_use_windows_threads();
+//#endif
 #endif
 
 	evutil_weakrand_seed_(&weakrand_state, 0);

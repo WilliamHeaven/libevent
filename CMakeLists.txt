@@ -1315,10 +1315,10 @@ if (NOT EVENT__DISABLE_TESTS)
 
     add_test(test-ratelim__group_lim
              ${RL_BIN}
-             -g 35000
+             -g 30000
              -n 30
              -t 100
-             --check-grouplimit 1000
+             --check-grouplimit 2000
              --check-stddev 100)
 
     # Connection limit, no group limit.
@@ -1337,7 +1337,7 @@ if (NOT EVENT__DISABLE_TESTS)
              -g 30000
              -n 30
              -t 100
-             --check-grouplimit 1000
+             --check-grouplimit 2000
              --check-connlimit 50
              --check-stddev 50)
 
@@ -1349,7 +1349,7 @@ if (NOT EVENT__DISABLE_TESTS)
              -n 30
              -t 100
              -G 500
-             --check-grouplimit 1000
+             --check-grouplimit 2000
              --check-connlimit 50
              --check-stddev 50)
 
