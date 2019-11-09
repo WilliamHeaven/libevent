@@ -119,6 +119,8 @@ loud_writecb(struct bufferevent *bev, void *ctx)
 	while (evbuffer_get_length(output) < 8192) {
 		evbuffer_add(output, buf, sizeof(buf));
 		cs->queued += sizeof(buf);
+		static int i = 0;
+		printf("i:%d sizeof(buf):%d\n",i++,sizeof(buf));
 	}
 }
 
@@ -129,6 +131,8 @@ discard_readcb(struct bufferevent *bev, void *ctx)
 	struct evbuffer *input = bufferevent_get_input(bev);
 	size_t len = evbuffer_get_length(input);
 	evbuffer_drain(input, len);
+	static int i = 0;
+	printf("i:%d len:%d\n",i++,len);
 	cs->received += len;
 }
 

@@ -1318,7 +1318,7 @@ if (NOT EVENT__DISABLE_TESTS)
              -g 30000
              -n 30
              -t 100
-             --check-grouplimit 2000
+             --check-grouplimit 1000
              --check-stddev 100)
 
     # Connection limit, no group limit.
@@ -1337,7 +1337,7 @@ if (NOT EVENT__DISABLE_TESTS)
              -g 30000
              -n 30
              -t 100
-             --check-grouplimit 2000
+             --check-grouplimit 1000
              --check-connlimit 50
              --check-stddev 50)
 
@@ -1349,7 +1349,7 @@ if (NOT EVENT__DISABLE_TESTS)
              -n 30
              -t 100
              -G 500
-             --check-grouplimit 2000
+             --check-grouplimit 1000
              --check-connlimit 50
              --check-stddev 50)
 
@@ -1370,6 +1370,7 @@ if (NOT EVENT__DISABLE_TESTS)
 
         message(STATUS "${WINDOWS_CTEST_COMMAND}")
 
+#endif
         file(COPY ${CMAKE_CURRENT_BINARY_DIR}/tmp/verify_tests.bat
              DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
              FILE_PERMISSIONS
