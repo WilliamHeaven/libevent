@@ -1315,7 +1315,7 @@ if (NOT EVENT__DISABLE_TESTS)
 
     add_test(test-ratelim__group_lim
              ${RL_BIN}
-             -g 30000
+             -g 35000
              -n 30
              -t 100
              --check-grouplimit 1000
