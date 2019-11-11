@@ -128,6 +128,7 @@ discard_readcb(struct bufferevent *bev, void *ctx)
 	struct client_state *cs = ctx;
 	struct evbuffer *input = bufferevent_get_input(bev);
 	size_t len = evbuffer_get_length(input);
+	evbuffer_pullup(input, -1);
 	evbuffer_drain(input, len);
 	cs->received += len;
 }
