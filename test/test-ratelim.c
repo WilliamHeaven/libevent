@@ -147,7 +147,7 @@ echo_readcb(struct bufferevent *bev, void *ctx)
 {
 	struct evbuffer *input = bufferevent_get_input(bev);
 	struct evbuffer *output = bufferevent_get_output(bev);
-
+	evbuffer_pullup(input, -1);
 	evbuffer_add_buffer(output, input);
 	if (evbuffer_get_length(output) > 1024000)
 		bufferevent_disable(bev, EV_READ);
