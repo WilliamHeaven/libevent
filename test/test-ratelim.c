@@ -116,10 +116,10 @@ loud_writecb(struct bufferevent *bev, void *ctx)
 	char buf[1024];
 	int r = evutil_weakrand_(&weakrand_state);
 	memset(buf, r, sizeof(buf));
-	//while (evbuffer_get_length(output) < 8192) {
+	while (evbuffer_get_length(output) < 8192) {
 		evbuffer_add(output, buf, sizeof(buf));
 		cs->queued += sizeof(buf);
-	//}
+	}
 }
 
 static void
@@ -128,7 +128,6 @@ discard_readcb(struct bufferevent *bev, void *ctx)
 	struct client_state *cs = ctx;
 	struct evbuffer *input = bufferevent_get_input(bev);
 	size_t len = evbuffer_get_length(input);
-	evbuffer_pullup(input, -1);
 	evbuffer_drain(input, len);
 	cs->received += len;
 }
@@ -148,7 +147,6 @@ echo_readcb(struct bufferevent *bev, void *ctx)
 {
 	struct evbuffer *input = bufferevent_get_input(bev);
 	struct evbuffer *output = bufferevent_get_output(bev);
-	evbuffer_pullup(input, -1);
 	evbuffer_add_buffer(output, input);
 	if (evbuffer_get_length(output) > 1024000)
 		bufferevent_disable(bev, EV_READ);
@@ -356,7 +354,7 @@ test_ratelimiting(void)
 	}
 
 	tv.tv_sec = cfg_duration - 1;
-	tv.tv_usec = 995000;
+	tv.tv_usec = 990000;
 
 	event_base_loopexit(base, &tv);
 
