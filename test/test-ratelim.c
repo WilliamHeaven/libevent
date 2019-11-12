@@ -354,7 +354,7 @@ test_ratelimiting(void)
 	}
 
 	tv.tv_sec = cfg_duration - 1;
-	tv.tv_usec = 812500;
+	tv.tv_usec = 813500;
 
 	event_base_loopexit(base, &tv);
 
