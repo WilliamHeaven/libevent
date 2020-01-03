@@ -14,7 +14,7 @@ jobs:
     runs-on: windows-2016
     strategy:
       matrix:
-        pattern: [0, 1]
+        pattern: [0]
     steps:
     - uses: actions/checkout@v1
     - name: install depend
@@ -42,6 +42,7 @@ jobs:
           $env:PATH="$env:MPATH;$env:OPENSSL_ROOT/bin;$env:PATH"
           $env:LDFLAGS="-L$($env:OPENSSL_ROOT)/lib -L$($env:OPENSSL_ROOT)"
           $env:CFLAGS="-I$($env:OPENSSL_ROOT)/include"
+          echo $env:PATH
           $script='
           ./autogen.sh 2>&1 3>&1
           [[ $? -ne 0 ]] && exit 1
@@ -55,7 +56,7 @@ jobs:
           make verify -j $EVENT_TESTS_PARALLEL 2>&1 '
           bash -c $script
         } else {
-          $env:PATH="$env:OPENSSL_ROOT/bin;$env:PATH"
+          $env:PATH="$env:OPENSSL_ROOT/bin;$env:PATH;$env:OPENSSL_ROOT/bin;"
           echo $env:APPVEYOR_BUILD_WORKER_IMAGE
           echo $env:LDFLAGS
           echo $env:CFLAGS
